@@ -70,33 +70,33 @@ kinds of system.
 In the above example of contexts and types, we can achieve this goal by
 first stripping away the type dependencies (``type erasure'') and then defining
 a predicate which states whether an instance of the erased types is well-formed
-according to the dependencies we erased.
+according to the dependencies we erased (cf. last year's talk~\cite{types2018}).
 The recursor is obtained by defining a relation between erased types and the
 types of an arbitrary algebra, which then can be shown to be functional.
 In Lean, the main definitions of such a construction would look like this, with
 \texttt{S'0} being the erased types, \texttt{Sw} being the wellformedness predicate,
 and \texttt{rel} being the recursor relation:
 \noindent
-\begin{minipage}{.3\textwidth}
+\begin{minipage}{.33\textwidth}
 \begin{lstlisting}
 inductive S'0 : bool → Type
 | nil : S'0 ⊥
-| ext : S'0 ⊥ → S'0 ⊤
-        → S'0 ⊥
+| ext : S'0 ⊥ → S'0 ⊤ → S'0 ⊥
 | unit : S'0 ⊥ → S'0 ⊤
 | pi : S'0 ⊥ → S'0 ⊤
        → S'0 ⊤ → S'0 ⊤
 \end{lstlisting}
 \end{minipage} \hfill
-\begin{minipage}{.68\textwidth}
+\begin{minipage}{.65\textwidth}
 \begin{lstlisting}
-def Sw0_argtype (b : bool) : Type := if b then unit else S'.C
+def Sw_arg (b : bool) : Type := if b then unit else S'.C
 
-inductive Sw : Π b, S'0 b → Sw0_argtype b → Prop
+inductive Sw : Π b, S'0 b → Sw_arg b → Prop
 | nil : Sw ⊥ S'0.nil ()
 | ext : Π Γ A xΓ, Sw ⊥ Γ xΓ → Sw ⊤ A Γ → Sw ⊥ (S'.ext Γ A) ()
 | unit : Π Γ xΓ, Sw ⊥ Γ xΓ → Sw ⊤ (S'.unit Γ) Γ
-| pi : Π Γ A B xΓ, Sw ⊥ Γ xΓ → Sw ⊤ A Γ → Sw ⊤ B (S'.ext Γ A) → Sw ⊤ (S'.pi Γ A B) Γ
+| pi : Π Γ A B xΓ, Sw ⊥ Γ xΓ → Sw ⊤ A Γ → Sw ⊤ B (S'.ext Γ A)
+       → Sw ⊤ (S'.pi Γ A B) Γ
 \end{lstlisting}
 \end{minipage}
 \noindent\begin{minipage}{\textwidth}\begin{lstlisting}
