@@ -1,0 +1,129 @@
+\documentclass{easychair}
+
+\usepackage{doc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage{amssymb,color,relsize}
+\definecolor{keywordcolor}{rgb}{0.7, 0.1, 0.1}   % red
+\definecolor{tacticcolor}{rgb}{0.1, 0.2, 0.6}    % blue
+\definecolor{commentcolor}{rgb}{0.4, 0.4, 0.4}   % grey
+\definecolor{symbolcolor}{rgb}{0.0, 0.1, 0.6}    % blue
+\definecolor{sortcolor}{rgb}{0.1, 0.5, 0.1}      % green
+\definecolor{attributecolor}{rgb}{0.7, 0.1, 0.1} % red
+
+
+\newcommand{\Con}{\mathsf{Con}}
+\newcommand{\Ty}{\mathsf{Ty}}
+\newcommand{\UU}{\mathcal{U}}
+
+\usepackage{listings}
+\def\lstlanguagefiles{lstlean.tex}
+%% \lstset{language=lean}
+
+\lstset{language=lean,breakatwhitespace,xleftmargin=\parindent}
+\lstMakeShortInline"
+
+\authorrunning{Altenkirch, Kaposi, Kovács, and von Raumer}
+\titlerunning{Conservativity Proof for Inductive-Inductive Types}
+
+\title{Towards a Formal Conservativity Proof \\ for Inductive-Inductive Types}
+
+\author{
+   Thorsten Altenkirch\inst{1}
+\and
+   Ambrus Kaposi\inst{2}
+\and
+   Andr\'as Kov\'acs\inst{2}
+\and
+   Jakob von Raumer\inst{1}
+}
+
+\institute{
+   University of Nottingham, United Kingdom\\
+   \email{thorsten.altenkirch@nott.ac.uk}, \email{jakob@von-raumer.de}
+\and
+   E\"otv\"os Lor\'and University, Budapest, Hungary\\
+   \email{\{akaposi, kovacsandras\}@inf.elte.hu}
+}
+
+\begin{document}
+\maketitle
+
+\section{Motivation}
+
+Inductive-inductive types allow the mutual definition of a type and, for example,
+a type family indexed over that type.
+This can be used to encode collections of types which are intricately inter-related
+such as the syntax of type theory itself, where we define a type $\Con : \UU$
+of contexts at the same time as a type of types over a context: $\Ty : \Con \to \UU$.
+
+Many theorem provers like Coq or Lean, which
+are based on foundations similar to the calculus of constructions (CoC),
+do not provide native support for inductive-inductive types.
+This raises the question about whether each example of an inductive-inductive
+type can be reduced to a (mutual) inductive family, which is supported by these
+kinds of system.
+
+In the above example of contexts and types, we can achieve this goal by
+first stripping away the type dependencies (``type erasure'') and then defining
+a predicate which states whether an instance of the erased types is well-formed
+according to the dependencies we erased.
+The recursor is obtained by defining a relation between erased types and the
+types of an arbitrary algebra, which then can be shown to be functional.
+In Lean, the main definitions of such a construction would look like this, with
+\texttt{S'0} being the erased types, \texttt{Sw} being the wellformedness predicate,
+and \texttt{rel} being the recursor relation:
+
+
+\noindent
+\begin{minipage}{.3\textwidth}
+\begin{lstlisting}
+inductive S'0 : bool → Type
+| nil : S'0 ff
+| ext : S'0 ff → S'0 tt
+        → S'0 ff
+| unit : S'0 ff → S'0 tt
+| pi : S'0 ff → S'0 tt
+       → S'0 tt → S'0 tt
+\end{lstlisting}
+\end{minipage} \hfill
+\begin{minipage}{.68\textwidth}
+\begin{lstlisting}
+def Sw0_argtype (b : bool) : Type :=
+if b then unit else S'.C
+inductive Sw : Π b, S'0 b → Sw0_argtype b → Prop
+| nil : Sw ff S'0.nil ()
+| ext : Π Γ A xΓ, Sw ff Γ xΓ → Sw tt A Γ → Sw ff (S'.ext Γ A) ()
+| unit : Π Γ xΓ, Sw ff Γ xΓ → Sw tt (S'.unit Γ) Γ
+| pi : Π Γ A B xΓ, Sw ff Γ xΓ → Sw tt A Γ → Sw tt B (S'.ext Γ A) → Sw tt (S'.pi Γ A B) Γ
+\end{lstlisting}
+\end{minipage}
+\noindent\begin{minipage}{\textwidth}\begin{lstlisting}
+parameters (M : CT)
+def rel_arg (b : bool) : bool → Type := if b then M.C else Σ γ, M.T γ
+inductive rel : Π b, S'0 b → rel_arg b → Prop
+| nil : rel ff S'0.nil M.nil
+| ext : Π Γ A γ a, rel ff Γ γ → rel tt A ⟨γ, a⟩ → rel ff (S'0.ext Γ A) (M.ext γ a)
+| unit : Π Γ γ, rel ff Γ γ → rel tt (S'0.unit Γ) ⟨γ, M.unit γ⟩
+| pi : Π Γ A B γ a b, rel ff Γ γ → rel tt A ⟨γ, a⟩ → rel tt B ⟨M.ext γ a, b⟩
+        → rel tt (S'0.pi Γ A B) ⟨γ, M.pi γ a b⟩
+\end{lstlisting}
+\end{minipage}
+
+
+\section{Contributions}
+
+\section{Future Work}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
+
+
+
+
+
+
