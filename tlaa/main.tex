@@ -53,13 +53,14 @@
 
 \section{Motivation}
 
-Inductive-inductive types allow the mutual definition of a type and, for example,
-a type family indexed over that type.
+Inductive-inductive types ~\cite{nordvallinductive, gabephd}
+allow the mutual definition of a type and, for example, a type family indexed
+over that type.
 This can be used to encode collections of types which are intricately inter-related
-such as the syntax of type theory itself, where we define a type $\Con : \UU$
+such as the syntax of type theory itself~\cite{ttintt}, where we define a type $\Con : \UU$
 of contexts at the same time as a type of types over a context: $\Ty : \Con \to \UU$.
 
-Many theorem provers like Coq or Lean, which
+Many theorem provers like Coq~\cite{coq} or Lean~\cite{lean}, which
 are based on foundations similar to the calculus of constructions (CoC),
 do not provide native support for inductive-inductive types.
 This raises the question about whether each example of an inductive-inductive
@@ -118,8 +119,8 @@ Dissecting this question, we provide answers for the following follow-up questio
 
 \begin{description}
 \item[What are inductive-inductive types?]
-We modify the approach of Kaposi and
-Kovács to use the contexts of a domain-specific type theory to generate the signatures
+We modify the approach of Kaposi and Kovács~\cite{qiit}
+to use the contexts of a domain-specific type theory to generate the signatures
 of inductive-inductive types. The syntax differentiates between \emph{sort
 constructors} and \emph{point constructors}.
 \item[What are inductive families?]
@@ -137,10 +138,13 @@ in the sense that every displayed algebra over it has a section (the dependent e
 We define two \emph{syntactical translations}: One for the type erasure and,
 depending on an algebra over it, one for the inductively defined wellformedness
 predicate, like the one contained in the above code snippet.
-\item[How to define the initial algebra] Assuming algebras over these transformed
-contexts, we generate an algebra over the original inductive-inductive context of
-which we are confident that we will be able to show its initiality.
+\item[How to define the initial algebra]
+Assuming algebras over these transformed contexts, we generate an algebra over
+the original inductive-inductive context of which we are confident that we will
+be able to show its initiality.
 \end{description}
+
+We have formalized all results in Agda: \url{https://github.com/javra/indind-agda}
 
 \bibliographystyle{plain}
 \bibliography{references}
