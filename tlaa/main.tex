@@ -112,12 +112,35 @@ inductive rel : Π b, S'0 b → rel_arg b → Prop
 \textbf{This raises the question about how to prove that this strategy works for \emph{every
 possible inductive-inductive type} instead of specific examples.}
 
-
 \section{Contributions}
 
+Dissecting this question, we provide answers for the following follow-up questions:
 
-
-\section{Future Work}
+\begin{description}
+\item[What are inductive-inductive types?]
+We modify the approach of Kaposi and
+Kovács to use the contexts of a domain-specific type theory to generate the signatures
+of inductive-inductive types. The syntax differentiates between \emph{sort
+constructors} and \emph{point constructors}.
+\item[What are inductive families?]
+We use a similar approach to specify inductive families:
+We define a syntax of \emph{sort contexts} and of \emph{contexts over a sort context}
+to capture mutual inductive families which may be parameterized over metatheoretic
+types.
+\item[What assumptions do we postulate?]
+We define notions of \emph{displayed algebras and their sections} over contexts
+describing inductive families, such that we can formally denote the prerequesite
+of our reduction:
+For every such context, there exists an algebra (the constructor) which is initial
+in the sense that every displayed algebra over it has a section (the dependent eliminator).
+\item[How to define type erasure and welltypedness]
+We define two \emph{syntactical translations}: One for the type erasure and,
+depending on an algebra over it, one for the inductively defined wellformedness
+predicate, like the one contained in the above code snippet.
+\item[How to define the initial algebra] Assuming algebras over these transformed
+contexts, we generate an algebra over the original inductive-inductive context of
+which we are confident that we will be able to show its initiality.
+\end{description}
 
 \bibliographystyle{plain}
 \bibliography{references}
