@@ -1,82 +1,94 @@
-\section{Motivation}
-Inductive-inductive types ~\cite{nordvallinductive, gabephd}
-allow the mutual definition of a type and, for example, a type family indexed
-over that type.
-This can be used to encode collections of types which are intricately inter-related
-such as the syntax of type theory itself~\cite{ttintt}, where we define a type $\Con : \UU$
-of contexts at the same time as a type of types over a context: $\Ty : \Con \to \UU$.
 
-Many theorem provers like Coq or Lean, which
-are based on foundations similar to the calculus of constructions (CoC),
-do not provide native support for inductive-inductive types.
-This raises the question about whether each example of an inductive-inductive
-type can be reduced to a (mutual) inductive family, which is supported by these
-kinds of system.
 
-Inspired by \cite{qiit}, we can devise a domain-specific type theory called the \emph{universal
-  inductive-inductive type} (universal IIT for short)  which allows
-to derive any inductive-inductive datatype, provided that this universal
-datatype can be encoded in the meta-theory.
+Inductive-inductive types \cite{nordvallinductive, gabephd} (IITs) allow the
+mutual definition of a type and, for example, a type family indexed over that
+type.  This can be used to encode collections of types which are intricately
+inter-related such as the syntax of type theory itself \cite{ttintt}, where we
+define a type $\Con : \UU$ of contexts at the same time as a type of types over
+a context: $\Ty : \Con \to \UU$. We show that IITs are reducible to indexed
+inductive types in a setting with uniqueness of identity proofs and function
+extensionality.
 
-\section{Encoding the universal IIT with indexed inductive types}
+\subsubsection*{Signatures and initial algebras for IITs}
 
-The goal of our work is to define a type enjoying the expected induction principle of the universal IIT, using
- (mutual) indexed inductive datatypes, which are directly available in Coq or Agda.
+In \cite{qiit}, a syntax for signatures of quotient inductive-inductive types
+(QIITs) is given. It is given as domain-specific type theory, where every typing
+context can be viewed as a listing of type, value and equality constructors. It
+is also shown that initial algebras for all QIITs can be constructed from terms
+of the syntax of signatures.
 
-A particular feature of the universal IIT as a dependent type theory is the absence of any conversion rule. For example, $\beta$-redexes do not appear, as $\lambda$-abstractions are not allowed. This makes us avoid the need for quotients.
+We can get inductive-inductive signatures by taking the equality-free fragment
+of QIIT signatures. We also restrict signatures so that they are closed (cannot
+refer to types external to a signature). In this case it also holds that all
+IITs are constructible from terms of the syntax of II signatures.
 
-More concretely, a term of the IIT is formalized as an untyped term with a proof that it is well-typed.
-Hence, the steps of our formalization are:
+However, this syntax of II signatures is given as a QIIT, and thus at this stage
+we can only show that if we assume the existence of this particular QIIT, then
+all IITs exist. We strengthen this result by giving a construction of the syntax
+of II signatures from indexed inductive types, thereby showing that all IITs are
+in fact constructible from indexed inductive types.
+
+\subsubsection*{Constructing the syntax of II signatures}
+
+This can be viewed as an instance of the initiality problem popularized by
+Voevodsky: we have an intrinsically typed categorical notion of model for a
+particular type theory (the theory of II signatures), and we aim to construct
+the initial model, using inductively defined preterms and well-formedness
+relations.
+
+However, the initiality proof in our case is simpler than in general, because
+the theory of II signatures does not contain $\beta$-rules, and thus it is
+possible to construct the initial model using only $\beta$-normal preterms,
+avoiding the usage of quotients.
+
+Hence, we first define normal preterms and typing relations on them, using indexed
+inductive types. Then, we use well-typed preterms to construct a model of the theory
+of II signatures. Lastly, we show that the constructed model is initial. We explain
+the last step in more detail.
+
+\subsubsection*{Initiality of the term model}
+
+Initiality means that we have a \emph{recursion principle} for II signatures,
+and recursors are also unique. This is less convenient in practice than
+\emph{induction}, but \cite{qiit} shows unique recursion to be equivalent to
+induction, and in our case it is easier to consider the former.
+
+To show initiality, we consider an arbitrary model for the theory of II
+signatures, and exhibit a unique morphism from the previously given term model
+to it. We do this in the following steps. Each step is preformed by induction on
+the presyntax.
+
 \begin{enumerate}
-\item Define untyped syntax as a mutual inductive datatype
-\item Define well-typed judgements as a mutual inductive datatype indexed over the untyped syntax
+  \item We define a relation between the presyntax and the given model.
+  \item We show that the relation is right-unique.
+  \item We show that the relation is preserved by substitution.
+  \item We show that the relation is left-total on well-typed presyntax.
+  \item Since now the relation is shown to be functional, we can use it to
+        build a model morphism.
+  \item We show that the model morphism is unique.
 \end{enumerate}
 
+Streicher's previous construction \cite{streicher2012semantics} used a family of
+partial functions from the presyntax to a given model, which functions are later
+shown to be total on well-formed presyntax. In contrast, we use a
+\emph{relation} which is later shown to be functional. In our experience, this
+approach is more convenient in a mechanized setting, and it could be applicable
+in initiality proofs for other type theories as well.
 
-The main challenge is to derive the induction principle for this syntax. 
-To explain more precisely what we mean by induction princple, let us focus on the example of natural numbers. The necessary data to perform a recursion on natural numbers is a set $X$ equipped with a point $x_0 \in X$ and an function $f: X \to X$. Then, recursion gives a function from the set of natural numbers to $X$ mapping $n$ to the image of $x_0$ by the $n^{th}$ composite of $f$. We call such a data $(X,x_0,f)$ a \emph{model of the natural numbers}.
-This can be straightforwardly formalized in a type-theoretic based proof assistant as a (dependent) record with three fields.
+\subsubsection*{Formalization}
+We formalized in Agda
+(\url{https://github.com/amblafont/UniversalII/blob/cwf-syntax/Cwf/}) the
+construction of the syntax of IIT signatures. Separately, there is an Agda
+formalization for \cite{qiit} in
+\url{https://bitbucket.org/akaposi/finitaryqiit}, which includes the
+construction of IITs from the syntax of II signatures.
 
-Note that the set of natural numbers with $0$ and the sucessor function is itself a model. The function provided
-by the recursion deserves the qualification of \emph{model morphism} in the sense that it maps $0$ to $x_0$, and commutes with the "successor" function (we call $f:X\to X$ the successor function of the model $(X,x_0,f)$).
-Again, the notion of model morphism can be defined as a dependent record with three fields ; two of them are equalities.
-
-We call the previous situation as a recursion principle.
- An "induction principle" is stronger in the sense that it allows the following reasoning: given a predicate on natural numbers, if it is true of zero and is hereditary (in the sense that if it is true of $n$, then it is true of $n+1$). Actually, this was shown to be equivalent in extensional type theory to the recursion principle that we just exposed, provided the model morphism can be proved unique. This is the approach that we adopt here: we exhibit a recursion principle and show uniqueness of the induced model morphisms.
-
-
-As a matter of fact, our formalized syntax already comes with an induction principle from its definition as indexed inductive datatypes. But such induction is weaker than the one we are looking for.
- % More precisely, there is a way to derive the definition of a model and model morphism of the universal IIT from the high-level specification of the syntax. 
- Our task consists in building a model morphism from the syntax to a given arbitrary model, using the "weak" induction principle provided by our formalization syntax.
-This is done by:
-\begin{enumerate}
-\item
-  defining the functional relation associated with the wanted model morphism
-  %: $t~ u$ if $u$ is the image of $t$ by the model morphism
-\item
-showing that there is at most one related image
-\item
-  showing that the relation is preserved by the substitution of the universal IIT
-\item
-showing that there is a related image
-\end{enumerate}
-
-As argued above, each of these steps is done by induction on the formalized syntax. 
-A last step consists in showing uniqueness of the induced model morphism. Actually, this is obtained as a consequence of Step 2.
-
-% We have two caveats:
-% \begin{enumerate}
-% \item for Step 2, we found ourselves in need for assuming uniqueness of identity proofs in the meta-theory. It means that there is at most one proof of equality between any two terms, and is compatible with extensional type theory, where propositional equality coincides with judgemental equality;
-% \item in order to ease our formalization (more specifically, deal with the so-called "transport hell"), we have assumed given an arbitrary model where some equalities are judgementally satisfied. This is implementable in agda using rewrite rules. Once again, this is acceptable in extensional type theory.
-% \end{enumerate}
-
-
-
-\section{Conclusion}
-We formalized in agda
-(\url{https://github.com/amblafont/UniversalII/blob/cwf-syntax/Cwf/}) the syntax
-of the universal IIT and its associated induction principle through indexed
-inductive datatypes. We also assume the uniqueness of identity proofs and use
-rewrite rules. Showing that we can then encode any inductive-inductive datatype
-is work in progress.
-% , as well as extending the universal IIT with parameters with a view to tackling parameterized inductive-inductive datatypes.
+Note that the \cite{qiit} formalization assumed definitional computation rules
+for induction on signatures, while our current construction of signatures only
+provides propositional computation rules. However, we already assume uniqueness
+of identity proofs (UIP) along with function extensionality, and also use limited
+equality reflection in the form of Agda rewrite rules. Hence, our formalization
+is largely in an extensional setting, and thus the propositional-definitional
+mismatch is not essential. Repeating these constructions without UIP and equality
+reflection is a potential line of future work. Another future research would be to
+extend the current result to open and infinitary signatures and QIITs.
