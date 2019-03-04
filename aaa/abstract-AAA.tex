@@ -12,7 +12,7 @@ extensionality.
 \subsubsection*{Signatures and initial algebras for IITs}
 
 In \cite{qiit}, a syntax for signatures of quotient inductive-inductive types
-(QIITs) is given. It is given as domain-specific type theory, where every typing
+(QIITs) is given as a domain-specific type theory, where every typing
 context can be viewed as a listing of type, value and equality constructors. It
 is also shown that initial algebras for all QIITs can be constructed from terms
 of the syntax of signatures.
@@ -39,7 +39,7 @@ relations.
 However, the initiality proof in our case is simpler than in general, because
 the theory of II signatures does not contain $\beta$-rules, and thus it is
 possible to construct the initial model using only $\beta$-normal preterms,
-avoiding the usage of quotients.
+avoiding the use of quotients.
 
 Hence, we first define normal preterms and typing relations on them, using indexed
 inductive types. Then, we use well-typed preterms to construct a model of the theory
@@ -71,14 +71,15 @@ the presyntax.
 Streicher's previous construction \cite{streicher2012semantics} used a family of
 partial functions from the presyntax to a given model, which functions are later
 shown to be total on well-formed presyntax. In contrast, we use a
-\emph{relation} which is later shown to be functional. In our experience, this
-approach is more convenient in a mechanized setting, and it could be applicable
-in initiality proofs for other type theories as well.
+\emph{relation} which is later shown to be functional. For our use case, the
+relational approach seemed to be more convenient in a mechanized setting, and it
+could be worthwhile to try it in initiality proofs for other type theories as
+well.
 
 \subsubsection*{Formalization}
 We formalized in Agda
 (\url{https://github.com/amblafont/UniversalII/blob/cwf-syntax/Cwf/}) the
-construction of the syntax of IIT signatures. Separately, there is an Agda
+construction of the syntax of II signatures. Separately, there is an Agda
 formalization for \cite{qiit} in
 \url{https://bitbucket.org/akaposi/finitaryqiit}, which includes the
 construction of IITs from the syntax of II signatures.
