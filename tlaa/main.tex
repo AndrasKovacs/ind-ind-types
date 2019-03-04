@@ -26,9 +26,9 @@
 \lstMakeShortInline"
 
 \authorrunning{Altenkirch, Kaposi, Kovács, and von Raumer}
-\titlerunning{Conservativity Proof for Inductive-Inductive Types}
+\titlerunning{Translation from Inductive-Inductive Types to Inductive Families}
 
-\title{Towards a Formal Conservativity Proof \\ for Inductive-Inductive Types}
+\title{A Formal Translation from Inductive-Inductive Types to Inductive Families}
 
 \author{
    Thorsten Altenkirch\inst{1}
@@ -51,7 +51,7 @@
 \begin{document}
 \maketitle
 
-\section{Motivation}
+%\section{Motivation}
 
 Inductive-inductive types ~\cite{nordvallinductive, gabephd}
 allow the mutual definition of a type and, for example, a type family indexed
@@ -110,12 +110,14 @@ inductive rel : Π b, S'0 b → rel_arg b → Prop
         → rel ⊤ (S'0.pi Γ A B) ⟨γ, M.pi γ a b⟩
 \end{lstlisting}
 \end{minipage}
-\textbf{This raises the question about how to prove that this strategy works for \emph{every
+
+\noindent \textbf{This raises the question about how to prove that this strategy works for \emph{every
 possible inductive-inductive type} instead of specific examples.}
 
-\section{Contributions}
+%\section{Contributions}
+\newpage
 
-Dissecting this question, we provide answers for the following follow-up questions:
+\noindent Dissecting this question, we provide answers for the following follow-up questions:
 
 \begin{description}
 \item[What are inductive-inductive types?]
@@ -134,16 +136,25 @@ describing inductive families, such that we can formally denote the prerequesite
 of our reduction:
 For every such context, there exists an algebra (the constructor) which is initial
 in the sense that every displayed algebra over it has a section (the dependent eliminator).
-\item[How to define type erasure and welltypedness]
+\item[How to define type erasure and welltypedness.]
 We define two \emph{syntactical translations}: One for the type erasure and,
 depending on an algebra over it, one for the inductively defined wellformedness
 predicate, like the one contained in the above code snippet.
-\item[How to define the initial algebra]
+\item[How to define the initial algebra.]
 Assuming algebras over these transformed contexts, we generate an algebra over
 the original inductive-inductive context of which we are confident that we will
 be able to show its initiality.
 \end{description}
 
+\noindent
+%Note that the same goal can be achieved by constructing the initial term model of
+%a universal inductive-inductive type, though that strategy does not use or produce
+%the erased syntax.
+Our work can be seen as a first step towards a proof of \emph{initiality}
+for various flavors of type theory the syntax of which is presented in the form
+of a quotient inductive-inductive type.
+This would require to generalize the above steps to allow for \emph{path constructors}
+in the syntax for inductive-inductive types and \emph{quotienting inductive families}.
 We have formalized all results in Agda: \url{https://github.com/javra/indind-agda}
 
 \bibliographystyle{plain}
