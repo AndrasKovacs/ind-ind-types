@@ -28,7 +28,9 @@
 \authorrunning{Altenkirch, Kaposi, Kovács, and von Raumer}
 \titlerunning{Translation from Inductive-Inductive Types to Inductive Families}
 
-\title{A Formal Translation from Inductive-Inductive Types to Inductive Families}
+\title{Constructing Inductive-Inductive Types via Type Erasure}
+
+  %% A Formal Translation from Inductive-Inductive Types to Inductive Families}
 
 \author{
    Thorsten Altenkirch\inst{1}
@@ -57,7 +59,7 @@ Inductive-inductive types ~\cite{nordvallinductive, gabephd}
 allow the mutual definition of a type and, for example, a type family indexed
 over that type.
 This can be used to encode collections of types which are intricately inter-related
-such as the syntax of type theory itself~\cite{ttintt}, where we define a type $\Con : \UU$
+such as the syntax of type theory itself, where we define a type $\Con : \UU$
 of contexts at the same time as a type of types over a context: $\Ty : \Con \to \UU$.
 
 Many theorem provers like Coq~\cite{coq} or Lean~\cite{lean}, which
@@ -74,7 +76,7 @@ according to the dependencies we erased (cf. last year's talk~\cite{types2018}).
 The recursor is obtained by defining a relation between erased types and the
 types of an arbitrary algebra, which then can be shown to be functional.
 In Lean, the main definitions of such a construction would look like this, with
-\texttt{S'0} being the erased types, \texttt{Sw} being the wellformedness predicate,
+\texttt{S'0} being the erased types, \texttt{Sw} being the well-formedness predicate,
 and \texttt{rel} being the recursor relation:
 \noindent
 \begin{minipage}{.33\textwidth}
@@ -134,11 +136,11 @@ types.
 We define notions of \emph{displayed algebras and their sections} over contexts
 describing inductive families, such that we can formally denote the prerequesite
 of our reduction:
-For every such context, there exists an algebra (the constructor) which is initial
+for every such context, there exists an algebra (the constructor) which is initial
 in the sense that every displayed algebra over it has a section (the dependent eliminator).
-\item[How to define type erasure and welltypedness.]
+\item[How to define type erasure and well-formedness.]
 We define two \emph{syntactical translations}: One for the type erasure and,
-depending on an algebra over it, one for the inductively defined wellformedness
+depending on an algebra over it, one for the inductively defined well-formedness
 predicate, like the one contained in the above code snippet.
 \item[How to define the initial algebra.]
 Assuming algebras over these transformed contexts, we generate an algebra over
@@ -147,23 +149,17 @@ be able to show its initiality.
 \end{description}
 
 \noindent
-%Note that the same goal can be achieved by constructing the initial term model of
-%a universal inductive-inductive type, though that strategy does not use or produce
-%the erased syntax.
-Our work can be seen as a first step towards a proof of \emph{initiality}
-for various flavors of type theory the syntax of which is presented in the form
-of a quotient inductive-inductive type.
-This would require to generalize the above steps to allow for \emph{path constructors}
-in the syntax for inductive-inductive types and \emph{quotienting inductive families}.
-We have formalized all results in Agda: \url{https://github.com/javra/indind-agda}
+The above approach for constructing initial algebras differs from the term model
+construction in \cite{qiit} in that we give a factorization of algebras
+into erased presyntax and well-formedness predicates. This can be seen as a
+first step towards a generic method of initiality proofs for various type
+theories presented as quotient inductive-inductive types. This would require to
+generalize the above steps to allow equality constructors in the syntax of
+signatures. We have formalized all results in Agda:
+\url{https://github.com/javra/indind-agda}
+
 
 \bibliographystyle{plain}
 \bibliography{references}
 
 \end{document}
-
-
-
-
-
-
