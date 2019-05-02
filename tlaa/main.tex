@@ -26,7 +26,7 @@
 \lstMakeShortInline"
 
 \authorrunning{Altenkirch, Kaposi, Kovács, and von Raumer}
-\titlerunning{Translation from Inductive-Inductive Types to Inductive Families}
+\titlerunning{Constructing Inductive-Inductive Types}
 
 \title{Constructing Inductive-Inductive Types via Type Erasure}
 
@@ -39,7 +39,7 @@
 \and
    Andr\'as Kov\'acs\inst{2}
 \and
-   Jakob von Raumer\inst{1}
+   Jakob~von~Raumer\inst{1}
 }
 
 \institute{
@@ -74,52 +74,54 @@ first stripping away the type dependencies (``type erasure'') and then defining
 a predicate which states whether an instance of the erased types is well-formed
 according to the dependencies we erased (cf. last year's talk~\cite{types2018}).
 The recursor is obtained by defining a relation between erased types and the
-types of an arbitrary algebra, which then can be shown to be functional.
+types of an arbitrary algebra \texttt{M}, which then can be shown to be functional.
 In Lean, the main definitions of such a construction would look like this, with
-\texttt{S'0} being the erased types, \texttt{Sw} being the well-formedness predicate,
+\texttt{CT} being the erased types of contexts and types, \texttt{CTw} being their well-formedness predicate,
 and \texttt{rel} being the recursor relation:
 \noindent
-\begin{minipage}{.33\textwidth}
+\begin{minipage}{.31\textwidth}
 \begin{lstlisting}
-inductive S'0 : bool → Type
-| nil : S'0 ⊥
-| ext : S'0 ⊥ → S'0 ⊤ → S'0 ⊥
-| unit : S'0 ⊥ → S'0 ⊤
-| pi : S'0 ⊥ → S'0 ⊤
-       → S'0 ⊤ → S'0 ⊤
+inductive CT : bool → Type
+| nil : CT ⊥
+| ext : CT ⊥ → CT ⊤ → CT ⊥
+| unit : CT ⊥ → CT ⊤
+| pi : CT ⊥ → CT ⊤
+       → CT ⊤ → CT ⊤
 \end{lstlisting}
 \end{minipage} \hfill
-\begin{minipage}{.65\textwidth}
+\begin{minipage}{.68\textwidth}
 \begin{lstlisting}
-def Sw_arg (b : bool) : Type := if b then unit else S'.C
+def CTw_arg (b : bool) : Type := if b then unit else CT ⊥
 
-inductive Sw : Π b, S'0 b → Sw_arg b → Prop
-| nil : Sw ⊥ S'0.nil ()
-| ext : Π Γ A xΓ, Sw ⊥ Γ xΓ → Sw ⊤ A Γ → Sw ⊥ (S'.ext Γ A) ()
-| unit : Π Γ xΓ, Sw ⊥ Γ xΓ → Sw ⊤ (S'.unit Γ) Γ
-| pi : Π Γ A B xΓ, Sw ⊥ Γ xΓ → Sw ⊤ A Γ → Sw ⊤ B (S'.ext Γ A)
-       → Sw ⊤ (S'.pi Γ A B) Γ
+inductive CTw : Π b, CT b → CTw_arg b → Prop
+| nil : CTw ⊥ CT.nil ()
+| ext : Π Γ A xΓ, CTw ⊥ Γ xΓ → CTw ⊤ A Γ → CTw ⊥ (CT.ext Γ A) ()
+| unit : Π Γ xΓ, CTw ⊥ Γ xΓ → CTw ⊤ (CT.unit Γ) Γ
+| pi : Π Γ A B xΓ, CTw ⊥ Γ xΓ → CTw ⊤ A Γ → CTw ⊤ B (CT.ext Γ A)
+       → CTw ⊤ (CT.pi Γ A B) Γ
 \end{lstlisting}
 \end{minipage}
 \noindent\begin{minipage}{\textwidth}\begin{lstlisting}
 def rel_arg (b : bool) : Type := if b then M.C else Σ γ, M.T γ
 
-inductive rel : Π b, S'0 b → rel_arg b → Prop
-| nil : rel ⊥ S'0.nil M.nil
-| ext : Π Γ A γ a, rel ⊥ Γ γ → rel ⊤ A ⟨γ, a⟩ → rel ⊥ (S'0.ext Γ A) (M.ext γ a)
-| unit : Π Γ γ, rel ⊥ Γ γ → rel ⊤ (S'0.unit Γ) ⟨γ, M.unit γ⟩
+inductive rel : Π b, CT b → rel_arg b → Prop
+| nil : rel ⊥ CT.nil M.nil
+| ext : Π Γ A γ a, rel ⊥ Γ γ → rel ⊤ A ⟨γ, a⟩ → rel ⊥ (CT.ext Γ A) (M.ext γ a)
+| unit : Π Γ γ, rel ⊥ Γ γ → rel ⊤ (CT.unit Γ) ⟨γ, M.unit γ⟩
 | pi : Π Γ A B γ a b, rel ⊥ Γ γ → rel ⊤ A ⟨γ, a⟩ → rel ⊤ B ⟨M.ext γ a, b⟩
-        → rel ⊤ (S'0.pi Γ A B) ⟨γ, M.pi γ a b⟩
+        → rel ⊤ (CT.pi Γ A B) ⟨γ, M.pi γ a b⟩
 \end{lstlisting}
 \end{minipage}
 
 \noindent \textbf{This raises the question about how to prove that this strategy works for \emph{every
 possible inductive-inductive type} instead of specific examples.}
+Compared to last year's contribution~\cite{types2018}, considerable progress on this
+generalization has been made.
 
 %\section{Contributions}
 \newpage
 
-\noindent Dissecting this question, we provide answers for the following follow-up questions:
+\noindent Dissecting the question, we provide answers for the following follow-up questions:
 
 \begin{description}
 \item[What are inductive-inductive types?]
