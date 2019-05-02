@@ -16,6 +16,10 @@
 
 \newcommand{\Con}{\mathsf{Con}}
 \newcommand{\Ty}{\mathsf{Ty}}
+\newcommand{\nil}{\mathsf{nil}}
+\newcommand{\ext}{\mathsf{ext}}
+\newcommand{\unit}{\mathsf{unit}}
+\newcommand{\piT}{\mathsf{piT}}
 \newcommand{\UU}{\mathcal{U}}
 
 \usepackage{listings}
@@ -61,6 +65,10 @@ over that type.
 This can be used to encode collections of types which are intricately inter-related
 such as the syntax of type theory itself, where we define a type $\Con : \UU$
 of contexts at the same time as a type of types over a context: $\Ty : \Con \to \UU$.
+Thes types could be populated by an empty context $\nil : \Con$, a function for
+context extension $\ext : (\Gamma : \Con) \to \Ty(\Gamma) \to \Con$, a unit type
+former $\unit : (\Gamma : \Con) \to \Ty(\Gamma)$ and a former for $\Pi$-types of the
+form $\piT : (\Gamma : \Con)(A : \Ty(\Gamma)) \to \Ty(\ext(\Gamma, A)) \to \Ty(\Gamma)$.
 
 Many theorem provers like Coq~\cite{coq} or Lean~\cite{lean}, which
 are based on foundations similar to the calculus of constructions (CoC),
