@@ -1,11 +1,10 @@
 
 
-Inductive-inductive types \cite{nordvallinductive, gabephd} (IITs) allow the
-mutual definition of a type and, for example, a type family indexed over that
-type.  This can be used to encode collections of types which are intricately
-inter-related such as the syntax of type theory itself \cite{ttintt}, where we
-define a type $\Con : \UU$ of contexts at the same time as a type of types over
-a context: $\Ty : \Con \to \UU$. We show that IITs are reducible to indexed
+A mutual Inductive-inductive type \cite{nordvallinductive, gabephd} (IITs) consists
+in a mutual definition of a type $\Con : \UU$ and a type family $\Ty : \Con \to
+\UU$ indexed over that type.  Extended with quotients, this allows to formalize
+the syntax of a dependent type theory \cite{ttintt}.
+ We show that IITs are reducible to indexed
 inductive types in a setting with uniqueness of identity proofs and function
 extensionality.
 
